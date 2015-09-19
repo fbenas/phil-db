@@ -50,10 +50,27 @@ class PhilDb
     ];
 
     /**
+     * Set the pdo errormode
+     * @var string
+     */
+    protected $errormode = "ERRMODE_EXCEPTION";
+
+    /**
      * Database driver connection
      * @var mixed
      */
-    public static $connection = false;
+    public static $instance = false;
+
+    /**
+     * PDO connection
+     * @var mixed
+     */
+    public $connection = false;
+    /**
+     * Additional DSN options
+     * @var boolean
+     */
+    protected $options = false;
 
     /**
      * Constructer for creating instances of the Phil Db class
@@ -75,8 +92,8 @@ class PhilDb
             if (!isset($option) || empty(trim($option))) {
                 throw new PhilDb_Exception("Parameter '" . $key . "' does not have a value");
             }
-            // Set the value
-            $this->$key = $option;
+            // Set the value (ensure lower case)
+            $this->$key = strtolower($option);
         }
 
         // Check we've set everything
@@ -90,7 +107,6 @@ class PhilDb
 
     /**
      * Static factory for creating an instance of the PhilDb class
-     * One parameter to choose the database driver.
      * Curerntly only mysql is supported and that's the default
      *
      * @param  string $driver pdo driver type
@@ -100,9 +116,12 @@ class PhilDb
      */
     public static function factory(array $config, $driver = "mysql")
     {
-        if (self::$connection != false) {
-            throw new PhilDb_Exception("Connection already exists");
+        if (self::$instance != false) {
+            throw new PhilDb_Exception("Instance already exists");
         }
+        // lowercase the driver
+        $driver = strtolower($driver);
+
         // Get the available drivers
         $available = \PDO::getAvailableDrivers();
 
@@ -113,7 +132,48 @@ class PhilDb
         if (!in_array($driver, self::$supportedDrivers)) {
             throw new PhilDb_Exception("Unsupported database driver");
         }
-        self::$connection = new self(array_merge(['driver' => $driver], $config));
-        return self::$connection;
+        self::$instance = new self(array_merge(['driver' => $driver], $config));
+        return self::$instance;
+    }
+
+    /**
+     * Connect to the database, if it exists
+     *
+     * @param  array  $options additional dsn options
+     * @return
+     * @author Phil Burton <phil@pgburton.com>
+     * @throws
+     */
+    public function connect(array $options)
+    {
+        if ($this->connection != false) {
+            throw new PhilDb_Exception("Connection already exists");
+        }
+        $this->options = $options;
+
+        try {
+            $this->connection = new \PDO($this->buildDsn(), $this->username, $this->password);
+            // Set the error mode
+            $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::$this->errormode);
+        } catch (\PDOException $e) {
+            throw new PhilDb_Exception("Connetion failed:" . $e->getMessage());
+        }
+    }
+
+    /**
+     * Createa the pdo Data Source Name (dsn) from the driver/database name
+     * and additional options
+     *
+     * @return string full dsn
+     * @author Phil Burton <phil@pgburton.com>
+     */
+    protected function buildDsn()
+    {
+        $dsn = $this->driver . ":dbname=" . $this->dbname;
+
+        foreach ($this->options as $key => $option) {
+            $dsn .= $key . "=" . $value . ";";
+        }
+        return $dsn;
     }
 }

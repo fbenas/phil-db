@@ -38,7 +38,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
             $message = $e->getMessage();
         }
         $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
-        PhilDb::$connection = false;
+        PhilDb::$instance = false;
     }
 
     /**
@@ -56,15 +56,15 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
             $message = $e->getMessage();
         }
         $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
-        PhilDb::$connection = false;
+        PhilDb::$instance = false;
     }
 
     /**
-     * Create connection once, then try again
+     * Create insetance once, then try again
      *
      * @author Phil Burton <phil@pgburton.com>
      */
-    public function testDriverConnectionExists()
+    public function testDriverInstanceExists()
     {
         $message    = false;
         $db         = false;
@@ -74,8 +74,8 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         } catch (\PhilDb\PhilDb_Exception $e) {
             $message = $e->getMessage();
         }
-        $this->assertEquals("Connection already exists", $message);
-        PhilDb::$connection = false;
+        $this->assertEquals("Instance already exists", $message);
+        PhilDb::$instance = false;
     }
 
     /**
@@ -95,7 +95,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
             $message = $e->getMessage();
         }
         $this->assertEquals("Invalid database driver", $message);
-        PhilDb::$connection = false;
+        PhilDb::$instance = false;
     }
 
     /**
@@ -115,6 +115,6 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
             $message = $e->getMessage();
         }
         $this->assertEquals("Unsupported database driver", $message);
-        PhilDb::$connection = false;
+        PhilDb::$instance = false;
     }
 }
