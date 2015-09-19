@@ -42,12 +42,26 @@ class PhilDb
     protected $driver;
 
     /**
+     * An array of drivers this warapper supports
+     * @var string[]
+     */
+    protected static $supportedDrivers = [
+        'mysql'
+    ];
+
+    /**
+     * Database driver connection
+     * @var mixed
+     */
+    public static $connection = false;
+
+    /**
      * Constructer for creating instances of the Phil Db class
      * Use an array to set the config options
      * Throwing Phil_Db_Exception if important information is missing
      *
      * @param  array $config array of config options
-     * @throws Phil_Db_Exception when config options are missing
+     * @throws Phil_Db_Exception
      * @author Phil Burton <phil@pgburton.com>
      */
     public function __construct(array $config)
@@ -59,7 +73,7 @@ class PhilDb
             }
             // trim the option's value and check it's not empty/null
             if (!isset($option) || empty(trim($option))) {
-                throw new PhilDb_Exception("Parameter'" . $key . "' dodes not have a value");
+                throw new PhilDb_Exception("Parameter '" . $key . "' does not have a value");
             }
             // Set the value
             $this->$key = $option;
@@ -72,5 +86,34 @@ class PhilDb
                 throw new PhilDb_Exception("Parameter '" . $i . "' was not given or set");
             }
         }
+    }
+
+    /**
+     * Static factory for creating an instance of the PhilDb class
+     * One parameter to choose the database driver.
+     * Curerntly only mysql is supported and that's the default
+     *
+     * @param  string $driver pdo driver type
+     * @return PhilDb instance of this class
+     * @author Phil Burton <phil@pgburton.com>
+     * @throws PhilDb_Exception
+     */
+    public static function factory(array $config, $driver = "mysql")
+    {
+        if (self::$connection != false) {
+            throw new PhilDb_Exception("Connection already exists");
+        }
+        // Get the available drivers
+        $available = \PDO::getAvailableDrivers();
+
+        if (!in_array($driver, $available)) {
+            throw new PhilDb_Exception("Invalid database driver");
+        }
+
+        if (!in_array($driver, self::$supportedDrivers)) {
+            throw new PhilDb_Exception("Unsupported database driver");
+        }
+        self::$connection = new self(array_merge(['driver' => $driver], $config));
+        return self::$connection;
     }
 }
