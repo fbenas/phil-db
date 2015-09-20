@@ -1,0 +1,26 @@
+<?php
+
+namespace PhilDb\Tests;
+
+use PhilDb\PhilDb;
+
+
+require_once(__DIR__ . '/../vendor/autoload.php');
+$config = [
+    "hostname"  => "localhost",
+    "dbname"    => "mysql",
+    "username"  => "phildb",
+    "password"  => "phildbpass"
+];
+$message    = false;
+$phildb     = false;
+$connection = false;
+try {
+    $phildb = PhilDb::factory($config);
+    $connection = $phildb->connect(["charset" => "utf-8"]);
+    var_dump($connection);die();
+    $connection->prepare('show tables')->execute();
+    var_dump($connection);die();
+} catch (PhilDb\PhilDb_Exception $e) {
+    $message = $e->getMessage();
+}
