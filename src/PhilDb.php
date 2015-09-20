@@ -103,7 +103,8 @@ class PhilDb
      * Static factory for creating an instance of the PhilDb class
      * Curerntly only mysql is supported and that's the default
      *
-     * @param  string $driver pdo driver type
+     * @param  array  $config
+     * @param  string $driver
      * @return PhilDb instance of this class
      * @author Phil Burton <phil@pgburton.com>
      * @throws PhilDb_Exception
