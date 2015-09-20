@@ -50,12 +50,6 @@ class PhilDb
     ];
 
     /**
-     * Set the pdo errormode
-     * @var string
-     */
-    protected $errormode = "ERRMODE_EXCEPTION";
-
-    /**
      * Database driver connection
      * @var mixed
      */
@@ -154,10 +148,17 @@ class PhilDb
         try {
             $this->connection = new \PDO($this->buildDsn(), $this->username, $this->password);
             // Set the error mode
-            $dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::$this->errormode);
+            $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
-            throw new PhilDb_Exception("Connetion failed:" . $e->getMessage());
+            if ($e->getCode() == 2002) {
+                throw new PhilDb_Exception("Failed connecting to host '" . $this->hostname . "'");
+            } elseif ($e->getCode() == 1049) {
+                throw new PhilDb_Exception("Database '" . $this->dbname . "' not found");
+            }
+            throw new PhilDb_Exception("Connetion failed: " . $e->getMessage());
         }
+
+        return $this->connection;
     }
 
     /**
@@ -169,10 +170,10 @@ class PhilDb
      */
     protected function buildDsn()
     {
-        $dsn = $this->driver . ":dbname=" . $this->dbname;
-
+        $dsn  = $this->driver . ":dbname=" . $this->dbname . ";";
+        $dsn .= "host=" . $this->hostname . ";";
         foreach ($this->options as $key => $option) {
-            $dsn .= $key . "=" . $value . ";";
+            $dsn .= $key . "=" . $option . ";";
         }
         return $dsn;
     }

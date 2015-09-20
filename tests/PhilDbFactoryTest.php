@@ -2,13 +2,13 @@
 
 namespace PhilDb\Tests;
 
-require_once(__DIR__ . '/../vendor/autoload.php');
-
 use PhilDb\PhilDb;
 use PhilDb\PhilDb_Exception;
 
 /**
  * Class to test the factory creation of PhilDb Objects
+ * NOTE: This Class assumes that the sqlite and mysql drivers for PDO
+ * are available
  *
  * @author  Phil Burton <phil@pgburton.com>
  */
@@ -101,6 +101,9 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
     /**
      * Check the factory throws a \PhilDb\PhilDb_Exception when trying to create
      * an instance of the PhilDb class with an unsupoorted driver
+     *
+     * NOTE: This test will fail if sqlite is not a supported driver
+     * run PDO::getAvailableDrivers() to see supported drivers
      *
      * @author Phil Burton <phil@pgburton.com>
      */

@@ -2,8 +2,6 @@
 
 namespace PhilDb\Tests;
 
-require_once(__DIR__ . '/../vendor/autoload.php');
-
 use PhilDb\PhilDb;
 use PhilDb\PhilDb_Exception;
 
@@ -19,7 +17,7 @@ class PhilDbConstructTest extends \PHPUnit_Framework_TestCase
      *
      * @author Phil Burton <phil@pgburton.com>
      */
-    public function testGoodConfig()
+    public function testValidConfig()
     {
         // Set up the config required
         $config = [
@@ -39,6 +37,7 @@ class PhilDbConstructTest extends \PHPUnit_Framework_TestCase
             $message = $e->getMessage();
         }
         $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
+        PhilDb::$instance = false;
     }
 
     /**
