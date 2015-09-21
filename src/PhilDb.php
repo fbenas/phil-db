@@ -66,6 +66,12 @@ class PhilDb
     protected $options = false;
 
     /**
+     * The last statement prepared
+     * @var boolean
+     */
+    protected $statement = false;
+
+    /**
      * Constructer for creating instances of the Phil Db class
      * Use an array to set the config options
      * Throwing Phil_Db_Exception if important information is missing
@@ -176,5 +182,28 @@ class PhilDb
             $dsn .= $key . "=" . $option . ";";
         }
         return $dsn;
+    }
+
+    /**
+     * Run a PDO prepare statement
+     *
+     * @param  string $sql
+     * @param  array  $params
+     * @return PDOStatement
+     * @author Phil Burton <phil@pgburton.com>
+     */
+    public function prepare($sql, array $params)
+    {
+        try {
+            $this->statement = $this->connection->prepare($sql);
+            foreach ($params as $key => $param) {
+                $this->statement->bindValue($key, $param);
+            }
+            $this->statement->execute();
+
+            return $this->statement;
+        } catch (\PDOException $e) {
+            throw new PhilDb_Exception("Prepare Error: " . $e->getMessage());
+        }
     }
 }
