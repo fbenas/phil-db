@@ -3,7 +3,7 @@
 namespace PhilDb\Tests;
 
 use PhilDb\PhilDb;
-use PhilDb\PhilDb_Exception;
+use PhilDb\PhilDbException;
 
 /**
  * Class to test the factory creation of PhilDb Objects
@@ -38,7 +38,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         $db         = false;
         try {
             $db = PhilDb::factory($this->config, $driver);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
@@ -56,7 +56,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         $db         = false;
         try {
             $db = PhilDb::factory($this->config);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
@@ -75,7 +75,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         try {
             $db = PhilDb::factory($this->config);
             $db = PhilDb::factory($this->config);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Instance already exists", $message);
@@ -83,7 +83,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Check the factory throws a \PhilDb\PhilDb_Exception when trying to create
+     * Check the factory throws a \PhilDb\PhilDbException when trying to create
      * an instance of the PhilDb class with an invalid driver
      *
      * @author Phil Burton <phil@pgburton.com>
@@ -95,7 +95,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         $driver     = 'test';
         try {
             $db = PhilDb::factory($this->config, $driver);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Invalid database driver", $message);
@@ -103,7 +103,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Check the factory throws a \PhilDb\PhilDb_Exception when trying to create
+     * Check the factory throws a \PhilDb\PhilDbException when trying to create
      * an instance of the PhilDb class with an unsupoorted driver
      *
      * NOTE: This test will fail if sqlite is not a supported driver
@@ -118,7 +118,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         $driver     = 'sqlite';
         try {
             $db = PhilDb::factory($this->config, $driver);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Unsupported database driver", $message);

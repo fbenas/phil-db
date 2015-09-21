@@ -3,7 +3,7 @@
 namespace PhilDb\Tests;
 
 use PhilDb\PhilDb;
-use PhilDb\PhilDb_Exception;
+use PhilDb\PhilDbException;
 
 /**
  * Class to test the construction of the Phil_Db class
@@ -33,7 +33,7 @@ class PhilDbConstructTest extends \PHPUnit_Framework_TestCase
         $message    = false;
         try {
             $db = new PhilDb($config);
-        } catch (PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
@@ -50,8 +50,8 @@ class PhilDbConstructTest extends \PHPUnit_Framework_TestCase
         $db     = false;
         $config = [];
         try {
-            $db = new PhilDb($config);
-        } catch (PhilDb_Exception $e) {
+            $db = new \PhilDb\PhilDb($config);
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Parameter 'hostname' was not given or set", $message);
@@ -70,8 +70,8 @@ class PhilDbConstructTest extends \PHPUnit_Framework_TestCase
             'test' => 'test'
         ];
         try {
-            $db = new PhilDb($config);
-        } catch (PhilDb_Exception $e) {
+            $db = new \PhilDb\PhilDb($config);
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Parameter 'test' does not exist", $message);
@@ -95,8 +95,8 @@ class PhilDbConstructTest extends \PHPUnit_Framework_TestCase
         ];
 
         try {
-            $db = new PhilDb($config);
-        } catch (PhilDb_Exception $e) {
+            $db = new  \PhilDb\PhilDb($config);
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Parameter 'driver' does not have a value", $message);
@@ -105,8 +105,8 @@ class PhilDbConstructTest extends \PHPUnit_Framework_TestCase
         $config['driver']   = " ";
         $db                 = false;
         try {
-            $db = new PhilDb($config);
-        } catch (PhilDb_Exception $e) {
+            $db = new  \PhilDb\PhilDb($config);
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Parameter 'driver' does not have a value", $message);

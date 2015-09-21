@@ -3,7 +3,7 @@
 namespace PhilDb\Tests;
 
 use PhilDb\PhilDb;
-use PhilDb\PhilDb_Exception;
+use PhilDb\PhilDbException;
 
 /**
  * Class to test the construction of the Phil_Db class
@@ -41,13 +41,13 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
             $statement = $pdo->prepare('show tables');
             $statement->execute();
             $result = $statement->fetch(\PDO::FETCH_ASSOC);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertInstanceOf("\PDO", $pdo, $message);
         $this->assertInstanceOf("\PDOStatement", $statement, $message);
         $this->assertTrue(is_array($result), $message);
-        PhilDb::$instance = false;
+        \PhilDb\PhilDb::$instance = false;
     }
 
     /**
@@ -67,12 +67,12 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
         try {
             $phildb = PhilDb::factory($config);
             $pdo = $phildb->connect(["charset" => "incorrect"]);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         // make sure the message was thrown correctly
         $this->assertTrue(false != $message);
-        PhilDb::$instance = false;
+        \PhilDb\PhilDb::$instance = false;
     }
 
     /**
@@ -90,13 +90,13 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
         ];
         $message    = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = \PhilDb\PhilDb::factory($config);
             $pdo = $phildb->connect([]);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Failed connecting to host 'badhostname'", $message);
-        PhilDb::$instance = false;
+        \PhilDb\PhilDb::$instance = false;
     }
 
     /**
@@ -114,13 +114,13 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
         ];
         $message    = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = \PhilDb\PhilDb::factory($config);
             $pdo = $phildb->connect([]);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertEquals("Database 'baddatabase' not found", $message);
-        PhilDb::$instance = false;
+        \PhilDb\PhilDb::$instance = false;
     }
 
     /**
@@ -138,13 +138,13 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
         ];
         $message    = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = \PhilDb\PhilDb::factory($config);
             $pdo = $phildb->connect([]);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertTrue(false != $message);
-        PhilDb::$instance = false;
+        \PhilDb\PhilDb::$instance = false;
     }
 
     /**
@@ -162,12 +162,12 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
         ];
         $message    = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = \PhilDb\PhilDb::factory($config);
             $pdo = $phildb->connect([]);
-        } catch (\PhilDb\PhilDb_Exception $e) {
+        } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
         $this->assertTrue(false != $message);
-        PhilDb::$instance = false;
+        \PhilDb\PhilDb::$instance = false;
     }
 }

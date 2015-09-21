@@ -2,8 +2,6 @@
 
 namespace PhilDb;
 
-use PhilDb\PhilDb_Exception;
-
 /**
  * A database wrapper for PDO database extension
  *
@@ -77,7 +75,7 @@ class PhilDb
      * Throwing Phil_Db_Exception if important information is missing
      *
      * @param  array $config array of config options
-     * @throws Phil_Db_Exception
+     * @throws PhilDbException
      * @author Phil Burton <phil@pgburton.com>
      */
     public function __construct(array $config)
@@ -85,11 +83,11 @@ class PhilDb
         foreach ($config as $key => $option) {
             // Check the option's key is a valid variable on the class
             if (!property_exists($this, $key)) {
-                throw new PhilDb_Exception("Parameter '" . $key . "' does not exist");
+                throw new PhilDbException("Parameter '" . $key . "' does not exist");
             }
             // trim the option's value and check it's not empty/null
             if (!isset($option) || empty(trim($option))) {
-                throw new PhilDb_Exception("Parameter '" . $key . "' does not have a value");
+                throw new PhilDbException("Parameter '" . $key . "' does not have a value");
             }
             // Set the value (ensure lower case)
             $this->$key = strtolower($option);
@@ -99,7 +97,7 @@ class PhilDb
         $important = ["hostname", "dbname", "username", "password", "driver"];
         foreach ($important as $i) {
             if (!isset($i) || empty($this->$i)) {
-                throw new PhilDb_Exception("Parameter '" . $i . "' was not given or set");
+                throw new PhilDbException("Parameter '" . $i . "' was not given or set");
             }
         }
     }
@@ -112,12 +110,12 @@ class PhilDb
      * @param  string $driver
      * @return PhilDb instance of this class
      * @author Phil Burton <phil@pgburton.com>
-     * @throws PhilDb_Exception
+     * @throws PhilDbException
      */
     public static function factory(array $config, $driver = "mysql")
     {
         if (self::$instance != false) {
-            throw new PhilDb_Exception("Instance already exists");
+            throw new PhilDbException("Instance already exists");
         }
         // lowercase the driver
         $driver = strtolower($driver);
@@ -126,11 +124,11 @@ class PhilDb
         $available = \PDO::getAvailableDrivers();
 
         if (!in_array($driver, $available)) {
-            throw new PhilDb_Exception("Invalid database driver");
+            throw new PhilDbException("Invalid database driver");
         }
 
         if (!in_array($driver, self::$supportedDrivers)) {
-            throw new PhilDb_Exception("Unsupported database driver");
+            throw new PhilDbException("Unsupported database driver");
         }
         self::$instance = new self(array_merge(['driver' => $driver], $config));
         return self::$instance;
@@ -142,12 +140,12 @@ class PhilDb
      * @param  array  $options additional dsn options
      * @return PDO A pdo connection
      * @author Phil Burton <phil@pgburton.com>
-     * @throws PhilDb_Exception
+     * @throws PhilDbException
      */
     public function connect(array $options)
     {
         if ($this->connection != false) {
-            throw new PhilDb_Exception("Connection already exists");
+            throw new PhilDbException("Connection already exists");
         }
         $this->options = $options;
 
@@ -157,11 +155,11 @@ class PhilDb
             $this->connection->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         } catch (\PDOException $e) {
             if ($e->getCode() == 2002) {
-                throw new PhilDb_Exception("Failed connecting to host '" . $this->hostname . "'");
+                throw new PhilDbException("Failed connecting to host '" . $this->hostname . "'");
             } elseif ($e->getCode() == 1049) {
-                throw new PhilDb_Exception("Database '" . $this->dbname . "' not found");
+                throw new PhilDbException("Database '" . $this->dbname . "' not found");
             }
-            throw new PhilDb_Exception("Connetion failed: " . $e->getMessage());
+            throw new PhilDbException("Connetion failed: " . $e->getMessage());
         }
 
         return $this->connection;
@@ -203,7 +201,7 @@ class PhilDb
 
             return $this->statement;
         } catch (\PDOException $e) {
-            throw new PhilDb_Exception("Prepare Error: " . $e->getMessage());
+            throw new PhilDbException("Prepare Error: " . $e->getMessage());
         }
     }
 }
