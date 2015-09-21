@@ -13,68 +13,20 @@ use PhilDb\PhilDbException;
  *
  * @author  Phil Burton <phil@pgburton.com>
  */
-class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
+class PhilDbFactoryTest extends PhilDbTestBase
 {
-    /**
-     * Config array
-     * @var array
-     */
-    protected $config = [
-        "hostname"  => "hostname",
-        "dbname"    => "dbname",
-        "username"  => "username",
-        "password"  => "password"
-    ];
-
-    /**
-     * Check the factory returns an object when using mysql as the driver
-     *
-     * @author Phil Burton <phil@pgburton.com>
-     */
-    public function testMysqlDriver()
-    {
-        $driver     = "mysql";
-        $message    = false;
-        $db         = false;
-        try {
-            $db = PhilDb::factory($this->config, $driver);
-        } catch (\PhilDb\PhilDbException $e) {
-            $message = $e->getMessage();
-        }
-        $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
-        PhilDb::$instance = false;
-    }
-
-    /**
-     * Check the factory returns an object when passing no driver param
-     *
-     * @author Phil Burton <phil@pgburton.com>
-     */
-    public function testNoDriverParam()
-    {
-        $message    = false;
-        $db         = false;
-        try {
-            $db = PhilDb::factory($this->config);
-        } catch (\PhilDb\PhilDbException $e) {
-            $message = $e->getMessage();
-        }
-        $this->assertInstanceOf("PhilDb\PhilDb", $db, $message);
-        PhilDb::$instance = false;
-    }
-
     /**
      * Create insetance once, then try again
      *
      * @author Phil Burton <phil@pgburton.com>
      */
-    public function testDriverInstanceExists()
+    public function testPhilDbInstanceExists()
     {
         $message    = false;
         $db         = false;
         try {
-            $db = PhilDb::factory($this->config);
-            $db = PhilDb::factory($this->config);
+            $db = PhilDb::factory($this->getGoodConfig());
+            $db = PhilDb::factory($this->getGoodConfig());
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
@@ -94,7 +46,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         $db         = false;
         $driver     = 'test';
         try {
-            $db = PhilDb::factory($this->config, $driver);
+            $db = PhilDb::factory($this->getBadDriverConfig());
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
@@ -117,7 +69,7 @@ class PhilDbFactoryTest extends \PHPUnit_Framework_TestCase
         $db         = false;
         $driver     = 'sqlite';
         try {
-            $db = PhilDb::factory($this->config, $driver);
+            $db = PhilDb::factory($this->getUnsupportedDriverConfig());
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }

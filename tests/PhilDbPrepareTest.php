@@ -16,7 +16,7 @@ use PhilDb\PhilDbException;
  *
  * @author  Phil Burton <phil@pgburton.com>
  */
-class PhilDbPrepareTest extends \PHPUnit_Framework_TestCase
+class PhilDbPrepareTest extends PhilDbTestBase
 {
     /**
      * Run a prepare statement with no params
@@ -25,17 +25,11 @@ class PhilDbPrepareTest extends \PHPUnit_Framework_TestCase
      */
     public function testNoParamPrepare()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         $phildb     = false;
         $statement  = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = PhilDb::factory($this->getGoodConfig());
             $phildb->connect([]);
             $statement = $phildb->prepare("show tables", []);
             $statement->execute();
@@ -54,17 +48,11 @@ class PhilDbPrepareTest extends \PHPUnit_Framework_TestCase
      */
     public function testParamPrepare()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         $phildb     = false;
         $statement  = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = PhilDb::factory($this->getGoodConfig());
             $phildb->connect([]);
             $statement = $phildb->prepare("select * from user where host = :host", ["host" => "localhost"]);
             $statement->execute();
@@ -83,17 +71,11 @@ class PhilDbPrepareTest extends \PHPUnit_Framework_TestCase
      */
     public function testMissingParamPrepare()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         $phildb     = false;
         $statement  = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = PhilDb::factory($this->getGoodConfig());
             $phildb->connect([]);
             $statement = $phildb->prepare("select * from user where host = :host");
             $statement->execute();
@@ -111,17 +93,11 @@ class PhilDbPrepareTest extends \PHPUnit_Framework_TestCase
      */
     public function testExecuteLastPrepare()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         $phildb     = false;
         $statement  = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = PhilDb::factory($this->getGoodConfig());
             $phildb->connect([]);
             $statement = $phildb->prepare("select * from user where host = 'localhost'");
             $statement->execute();
