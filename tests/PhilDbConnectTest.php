@@ -37,14 +37,13 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
         $result     = false;
         try {
             $phildb = PhilDb::factory($config);
-            $pdo = $phildb->connect([]);
-            $statement = $pdo->prepare('show tables');
+            $phildb->connect([]);
+            $statement = $phildb->prepare('show tables');
             $statement->execute();
             $result = $statement->fetch(\PDO::FETCH_ASSOC);
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
-        $this->assertInstanceOf("\PDO", $pdo, $message);
         $this->assertInstanceOf("\PDOStatement", $statement, $message);
         $this->assertTrue(is_array($result), $message);
         \PhilDb\PhilDb::$instance = false;
@@ -75,29 +74,29 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
         \PhilDb\PhilDb::$instance = false;
     }
 
-    /**
-     * Test connecting to the database with a bad hostname
-     *
-     * @author Phil Burton <phil@pgburton.com>
-     */
-    public function testBadHostnameFound()
-    {
-        $config = [
-            "hostname"  => "badhostname",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
-        $message    = false;
-        try {
-            $phildb = \PhilDb\PhilDb::factory($config);
-            $pdo = $phildb->connect([]);
-        } catch (\PhilDb\PhilDbException $e) {
-            $message = $e->getMessage();
-        }
-        $this->assertEquals("Failed connecting to host 'badhostname'", $message);
-        \PhilDb\PhilDb::$instance = false;
-    }
+    // /**
+    //  * Test connecting to the database with a bad hostname
+    //  *
+    //  * @author Phil Burton <phil@pgburton.com>
+    //  */
+    // public function testBadHostnameFound()
+    // {
+    //     $config = [
+    //         "hostname"  => "badhostname",
+    //         "dbname"    => "mysql",
+    //         "username"  => "phildb",
+    //         "password"  => "phildbpass"
+    //     ];
+    //     $message    = false;
+    //     try {
+    //         $phildb = \PhilDb\PhilDb::factory($config);
+    //         $pdo = $phildb->connect([]);
+    //     } catch (\PhilDb\PhilDbException $e) {
+    //         $message = $e->getMessage();
+    //     }
+    //     $this->assertEquals("Failed connecting to host 'badhostname'", $message);
+    //     \PhilDb\PhilDb::$instance = false;
+    // }
 
     /**
      * Test connecting to the database with a bad hostname

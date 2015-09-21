@@ -161,8 +161,6 @@ class PhilDb
             }
             throw new PhilDbException("Connetion failed: " . $e->getMessage());
         }
-
-        return $this->connection;
     }
 
     /**
@@ -183,25 +181,46 @@ class PhilDb
     }
 
     /**
-     * Run a PDO prepare statement
+     * Prepare and execute an sql statement with params injected
      *
      * @param  string $sql
      * @param  array  $params
      * @return PDOStatement
      * @author Phil Burton <phil@pgburton.com>
      */
-    public function prepare($sql, array $params)
+    public function prepare($sql, $params = false)
     {
+        if ($params === false) {
+            $params = [];
+        }
+        if (!is_array($params)) {
+             throw new PhilDbException("Second parameter for function 'prepare' must be an array or false");
+        }
         try {
             $this->statement = $this->connection->prepare($sql);
             foreach ($params as $key => $param) {
                 $this->statement->bindValue($key, $param);
             }
             $this->statement->execute();
-
             return $this->statement;
         } catch (\PDOException $e) {
             throw new PhilDbException("Prepare Error: " . $e->getMessage());
         }
+    }
+
+    /**
+     * If there is a statement stored on the isntance, re run it.
+     *
+     * @return PhilDb
+     * @author Phil Burton <phil@pgburton.com>
+     * @throws PhilDBException
+     */
+    public function executeLast()
+    {
+        if (!$this->statement) {
+            throw new PhilDbException("No statement to exectute");
+        }
+        $this->statement->execute();
+        return $this->statement;
     }
 }
