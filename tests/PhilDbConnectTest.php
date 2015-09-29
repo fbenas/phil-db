@@ -4,6 +4,7 @@ namespace PhilDb\Tests;
 
 use PhilDb\PhilDb;
 use PhilDb\PhilDbException;
+use PhilDb\PhilDbConfig;
 
 /**
  * Class to test the construction of the Phil_Db class
@@ -16,7 +17,7 @@ use PhilDb\PhilDbException;
  *
  * @author  Phil Burton <phil@pgburton.com>
  */
-class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
+class PhilDbConnectTest extends PhilDbTestBase
 {
     /**
      * Test connecting to the database with good config options
@@ -25,18 +26,12 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
      */
     public function testValidConnectionConfig()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         $phildb     = false;
         $statement  = false;
         $result     = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = PhilDb::factory($this->getGoodConfig());
             $phildb->connect([]);
             $statement = $phildb->prepare('show tables');
             $statement->execute();
@@ -56,15 +51,9 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
      */
     public function testCharsetConfig()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         try {
-            $phildb = PhilDb::factory($config);
+            $phildb = PhilDb::factory($this->getGoodConfig());
             $pdo = $phildb->connect(["charset" => "incorrect"]);
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
@@ -81,15 +70,9 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
     //  */
     // public function testBadHostnameFound()
     // {
-    //     $config = [
-    //         "hostname"  => "badhostname",
-    //         "dbname"    => "mysql",
-    //         "username"  => "phildb",
-    //         "password"  => "phildbpass"
-    //     ];
     //     $message    = false;
     //     try {
-    //         $phildb = \PhilDb\PhilDb::factory($config);
+    //         $phildb = \PhilDb\PhilDb::factory($this->getBadHostnameConfig());
     //         $pdo = $phildb->connect([]);
     //     } catch (\PhilDb\PhilDbException $e) {
     //         $message = $e->getMessage();
@@ -105,20 +88,14 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
      */
     public function testDbnameNotFound()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "baddatabase",
-            "username"  => "phildb",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         try {
-            $phildb = \PhilDb\PhilDb::factory($config);
+            $phildb = \PhilDb\PhilDb::factory($this->getBadDbnameConfig());
             $pdo = $phildb->connect([]);
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
         }
-        $this->assertEquals("Database 'baddatabase' not found", $message);
+        $this->assertEquals("Database 'bad-dbname' not found", $message);
         \PhilDb\PhilDb::$instance = false;
     }
 
@@ -129,15 +106,9 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadUsername()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "badusername",
-            "password"  => "phildbpass"
-        ];
         $message    = false;
         try {
-            $phildb = \PhilDb\PhilDb::factory($config);
+            $phildb = \PhilDb\PhilDb::factory($this->getBadUsernameConfig());
             $pdo = $phildb->connect([]);
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
@@ -153,15 +124,9 @@ class PhilDbConnectTest extends \PHPUnit_Framework_TestCase
      */
     public function testBadPassword()
     {
-        $config = [
-            "hostname"  => "localhost",
-            "dbname"    => "mysql",
-            "username"  => "phildb",
-            "password"  => "badpass"
-        ];
         $message    = false;
         try {
-            $phildb = \PhilDb\PhilDb::factory($config);
+            $phildb = \PhilDb\PhilDb::factory($this->getBadPasswordConfig());
             $pdo = $phildb->connect([]);
         } catch (\PhilDb\PhilDbException $e) {
             $message = $e->getMessage();
